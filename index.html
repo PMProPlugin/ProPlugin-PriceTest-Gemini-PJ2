@@ -181,12 +181,12 @@
         }
         
         /* --- A4 Tag Layout (1 per page) --- */
-        .grid-a4 { grid-template-columns: 1fr; grid-template-rows: 1fr; padding: 10mm; }
+        .grid-a4 { grid-template-columns: 1fr; grid-template-rows: 1fr; padding: 10mm; justify-items: center; align-items: center; }
         .tag-container-a4 { width: 190mm; height: 277mm; }
 
         /* --- A5 Tag Layout (2 per page) --- */
-        .grid-a5 { grid-template-columns: 1fr; grid-template-rows: repeat(2, 1fr); gap: 0; padding: 5mm; justify-items: center; align-items: center; }
-        .tag-container-a5 { width: 148mm; height: 200mm; transform: rotate(90deg) translateX(26mm) translateY(26mm); transform-origin: center; }
+        .grid-a5 { grid-template-columns: 1fr; grid-template-rows: repeat(2, 1fr); gap: 10mm 0; padding: 5mm; justify-items: center; align-items: center; }
+        .tag-container-a5 { width: 148mm; height: 210mm; }
 
         /* --- A6 Tag Layout (4 per page) --- */
         .grid-a6 { grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(2, 1fr); gap: 0; padding: 5mm; justify-items: center; align-items: center; }
@@ -308,6 +308,18 @@
         .tag-container-a4 .normal-price { font-size: 50pt; }
         .tag-container-a4 .promo-price, .tag-container-a4 .main-price { font-size: 120pt; }
 
+        /* --- A5 Specific Styles --- */
+        .tag-container-a5 .price-tag { border-radius: 15px; height: 138mm; } /* A5 is 148mm tall, giving it margins */
+        .tag-container-a5 .inner-content { border-radius: 12px; padding: 12mm; }
+        .tag-container-a5 .logo-container { top: 12mm; left: 12mm; height: 15mm; }
+        .tag-container-a5 .sku { top: 12mm; right: 12mm; font-size: 14pt; }
+        .tag-container-a5 .description { font-size: 36pt; margin-top: 18mm; }
+        .tag-container-a5 .details { font-size: 14pt; margin-top: 8mm; line-height: 1.5; }
+        .tag-container-a5 .price-area { bottom: 12mm; left: 12mm; width: calc(100% - 24mm); height: 45mm; }
+        .tag-container-a5 .expire-date { font-size: 14pt; }
+        .tag-container-a5 .normal-price { font-size: 28pt; }
+        .tag-container-a5 .promo-price, .tag-container-a5 .main-price { font-size: 64pt; }
+
         /* --- A6 Specific Styles --- */
         .tag-container-a6 .price-tag { border-radius: 10px; }
         .tag-container-a6 .inner-content { border-radius: 8px; padding: 8mm; }
@@ -319,21 +331,7 @@
         .tag-container-a6 .expire-date { font-size: 10pt; }
         .tag-container-a6 .normal-price { font-size: 18pt; }
         .tag-container-a6 .promo-price, .tag-container-a6 .main-price { font-size: 44pt; }
-        .tag-container-a6 .logo-img { content: url('http://googleusercontent.com/file_content/1'); } /* Placeholder for logo */
         
-        /* --- A5 Specific Styles (based on A6, but larger) --- */
-        .tag-container-a5 .price-tag { border-radius: 15px; }
-        .tag-container-a5 .inner-content { border-radius: 12px; padding: 12mm; }
-        .tag-container-a5 .logo-container { top: 12mm; left: 12mm; height: 15mm; }
-        .tag-container-a5 .sku { top: 12mm; right: 12mm; font-size: 14pt; }
-        .tag-container-a5 .description { font-size: 36pt; margin-top: 18mm; }
-        .tag-container-a5 .details { font-size: 14pt; margin-top: 8mm; line-height: 1.5; }
-        .tag-container-a5 .price-area { bottom: 12mm; left: 12mm; width: calc(100% - 24mm); height: 45mm; }
-        .tag-container-a5 .expire-date { font-size: 14pt; }
-        .tag-container-a5 .normal-price { font-size: 28pt; }
-        .tag-container-a5 .promo-price, .tag-container-a5 .main-price { font-size: 64pt; }
-        .tag-container-a5 .logo-img { content: url('http://googleusercontent.com/file_content/1'); } /* Placeholder for logo */
-
         /* --- Accessories Tag Specific Styles --- */
         .tag-container-acc .price-tag { border: 2px solid black; border-radius: 0; }
         .tag-container-acc .inner-content { display: none; } /* No inner white box for this template */
@@ -354,7 +352,6 @@
         .tag-container-acc .expire-date { font-size: 8pt; top: 2px; }
         .tag-container-acc .normal-price { font-size: 10pt; bottom: 50%; }
         .tag-container-acc .promo-price, .tag-container-acc .main-price { font-size: 20pt; bottom: 0; }
-        .tag-container-acc .logo-img { content: url('http://googleusercontent.com/file_content/1'); } /* Placeholder for logo */
 
     </style>
 </head>
