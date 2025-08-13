@@ -7,531 +7,1448 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;700&family=Prompt:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;700&display=swap" rel="stylesheet">
 
     <style>
-        /* --- Global Styles & Theme --- */
+        /* --- GLOBAL STYLES & THEME --- */
         :root {
             --bg-color: #1a1a1a;
-            --bg-light: #2c2c2c;
-            --text-color: #ffffff;
-            --primary-color: #e50914;
-            --border-color: #444444;
-            --font-main: 'Kanit', 'Prompt', sans-serif;
+            --surface-color: #2c2c2c;
+            --text-color: #f0f0f0;
+            --primary-red: #e53935;
+            --red-hover: #c62828;
+            --border-color: #444;
+            --font-family: 'Kanit', sans-serif;
         }
-        * { box-sizing: border-box; }
-        body {
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body {
+            height: 100%;
+            font-family: var(--font-family);
             background-color: var(--bg-color);
             color: var(--text-color);
-            font-family: var(--font-main);
-            margin: 0;
-            font-size: 14px;
-            line-height: 1.6;
+            font-size: 16px;
         }
-        .container {
-            max-width: 1400px;
-            margin: 20px auto;
-            padding: 0 20px;
-        }
-        .hidden { display: none !important; }
 
-        /* --- Login Screen --- */
-        #login-screen {
-            display: flex;
-            justify-content: center;
-            align-items: center;
+        /* --- LAYOUT & CONTAINERS --- */
+        #app-container {
+            display: none;
+            flex-direction: column;
             height: 100vh;
         }
-        #login-form {
-            background-color: var(--bg-light);
-            padding: 40px;
-            border-radius: 8px;
-            width: 100%;
-            max-width: 400px;
-            border: 1px solid var(--border-color);
-        }
-        #login-form h1 {
-            text-align: center;
-            margin-top: 0;
-            color: var(--primary-color);
-        }
-        .form-group { margin-bottom: 20px; }
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-        }
-        .form-group input {
-            width: 100%;
-            padding: 10px;
-            background-color: var(--bg-color);
-            border: 1px solid var(--border-color);
-            color: var(--text-color);
-            border-radius: 4px;
-        }
-        #login-error {
-            color: var(--primary-color);
-            text-align: center;
-            min-height: 20px;
-        }
-        button {
-            width: 100%;
-            padding: 12px;
-            background-color: var(--primary-color);
-            color: var(--text-color);
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-family: var(--font-main);
-            font-size: 16px;
-            font-weight: 500;
-        }
-        button:hover { opacity: 0.9; }
-        button:disabled { background-color: #555; cursor: not-allowed; }
 
-        /* --- Main App UI --- */
-        #app-header {
+        header {
+            background-color: var(--surface-color);
+            padding: 1rem 1.5rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px 0;
-            border-bottom: 2px solid var(--primary-color);
-            margin-bottom: 20px;
+            border-bottom: 2px solid var(--primary-red);
         }
-        #app-header h1 {
-            margin: 0;
-            font-size: 24px;
-        }
-        #user-info button { width: auto; padding: 8px 16px; font-size: 14px; }
-        #user-info .admin-link { margin-right: 15px; }
 
-        /* Controls */
+        main {
+            flex-grow: 1;
+            padding: 1.5rem;
+            overflow-y: auto;
+        }
+
         .controls-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 20px;
-            background-color: var(--bg-light);
-            padding: 20px;
-            border-radius: 8px;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
         }
-        .control-group { display: flex; flex-direction: column; }
-        .control-group label { margin-bottom: 8px; font-weight: 500;}
-        .control-group input, .control-group select {
-            padding: 10px;
-            background-color: var(--bg-color);
-            border: 1px solid var(--border-color);
-            color: var(--text-color);
-            border-radius: 4px;
+        
+        .control-group {
+            display: flex;
+            flex-direction: column;
         }
-        .main-actions button { width: auto; padding: 10px 20px;}
 
-        /* Table */
-        .table-container { overflow-x: auto; }
+        /* --- UI COMPONENTS --- */
+        button, input, select {
+            font-family: var(--font-family);
+            padding: 0.75rem;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            background-color: var(--surface-color);
+            color: var(--text-color);
+            font-size: 1rem;
+        }
+        
+        input::placeholder {
+            color: #888;
+        }
+
+        button {
+            cursor: pointer;
+            background-color: var(--primary-red);
+            border-color: var(--primary-red);
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+
+        button:hover {
+            background-color: var(--red-hover);
+        }
+        
+        button.secondary {
+            background-color: var(--surface-color);
+            border: 1px solid var(--primary-red);
+        }
+        
+        button.secondary:hover {
+            background-color: #454545;
+        }
+
+        button:disabled {
+            background-color: #555;
+            cursor: not-allowed;
+            color: #999;
+        }
+
+        label {
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: #ccc;
+        }
+
+        /* --- TABLE STYLES --- */
+        .table-container {
+            overflow-x: auto;
+        }
         table {
             width: 100%;
             border-collapse: collapse;
-            background-color: var(--bg-light);
+            margin-top: 1rem;
         }
+
         th, td {
-            padding: 12px 15px;
+            padding: 0.75rem 1rem;
             text-align: left;
             border-bottom: 1px solid var(--border-color);
             white-space: nowrap;
         }
+
         th {
             background-color: #333;
             font-weight: 500;
         }
-        tbody tr:hover { background-color: #3a3a3a; }
-        td .details-list {
-            padding-left: 15px; margin: 0; max-width: 300px;
-            white-space: normal; font-size: 12px;
+        
+        td.details-col {
+            white-space: normal;
+            min-width: 300px;
         }
-        td .gp-value { color: #4CAF50; font-weight: bold; }
-        [data-column="normal_price"] { text-decoration: line-through; color: #999; }
 
-        /* Pagination */
-        #pagination {
+        tr:hover {
+            background-color: #3a3a3a;
+        }
+        
+        .gp-col {
+            color: #4caf50;
+            font-weight: 500;
+        }
+        
+        /* --- PAGINATION --- */
+        .pagination {
             display: flex;
             justify-content: center;
             align-items: center;
-            margin-top: 20px;
+            margin-top: 1.5rem;
         }
-        #pagination button {
-            width: auto;
-            margin: 0 5px;
-            background-color: var(--bg-light);
-            border: 1px solid var(--border-color);
+        .pagination button {
+            margin: 0 0.5rem;
         }
-        #pagination button.active { background-color: var(--primary-color); }
 
-        /* --- Admin Panel --- */
-        #admin-panel {
-            background-color: var(--bg-light);
-            padding: 20px;
+        /* --- LOGIN SCREEN --- */
+        #login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+        }
+
+        #login-form {
+            background-color: var(--surface-color);
+            padding: 2.5rem;
             border-radius: 8px;
-        }
-        #admin-panel h2 { color: var(--primary-color); border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
-        .admin-section { margin-bottom: 30px; }
-        .admin-section .form-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 15px;
-        }
-        .admin-section textarea {
-            width: 100%; height: 100px; background-color: var(--bg-color);
-            border: 1px solid var(--border-color); color: var(--text-color); border-radius: 4px;
-            padding: 10px;
-        }
-        #logo-preview { max-width: 200px; max-height: 80px; background-color: #fff; padding: 5px; border-radius: 4px; margin-top: 10px; }
-
-        /* --- Preview Modal --- */
-        .modal-overlay {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.8);
+            width: 100%;
+            max-width: 400px;
             display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
+            flex-direction: column;
+            gap: 1.5rem;
+            border-top: 4px solid var(--primary-red);
         }
+        #login-error {
+            color: var(--primary-red);
+            text-align: center;
+            display: none;
+        }
+
+        /* --- MODAL (PREVIEW & ADMIN) --- */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.8);
+            align-items: center;
+            justify-content: center;
+        }
+
         .modal-content {
-            background: var(--bg-color);
-            padding: 20px;
+            background-color: var(--surface-color);
+            margin: auto;
+            padding: 2rem;
             border-radius: 8px;
             width: 90%;
             max-width: 1000px;
-            border: 1px solid var(--border-color);
+            max-height: 90vh;
+            overflow-y: auto;
             position: relative;
         }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; margin-bottom: 20px; }
-        .modal-close { font-size: 24px; cursor: pointer; background: none; border: none; color: white; }
-        .modal-body { display: flex; gap: 20px; }
-        .modal-controls { flex: 0 0 250px; }
-        .modal-preview-area { flex-grow: 1; display: flex; justify-content: center; align-items: center; background: #555; min-height: 500px; overflow: auto;}
-        .preview-nav button { width: auto; margin: 0 5px; }
+        
+        .close-button {
+            position: absolute;
+            top: 1rem;
+            right: 1.5rem;
+            color: #aaa;
+            font-size: 2rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        /* --- PREVIEW MODAL SPECIFICS --- */
+        #preview-area {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 400px;
+            background: #555;
+            border-radius: 4px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            overflow: auto;
+        }
 
-        /* --- Price Tag Styles (for Preview) --- */
-        .price-tag-preview-wrapper {
-            background: white;
+        .preview-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .preview-nav {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        /* --- ADMIN PANEL --- */
+        #admin-panel {
+            display: none;
+        }
+        
+        .admin-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+        
+        @media(min-width: 900px) {
+            .admin-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        
+        .admin-section {
+            background: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 4px;
+        }
+        
+        .admin-section h3 {
+            border-bottom: 2px solid var(--primary-red);
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        
+        /* --- PRICE TAG STYLES (COMMON) --- */
+        .price-tag {
+            background-color: white;
             color: black;
             font-family: 'Kanit', sans-serif;
-            position: relative;
+            display: grid;
+            grid-template-rows: auto 1fr auto;
+            border: 2mm solid black;
+            padding: 10mm;
             overflow: hidden;
-            transform-origin: top center;
+            position: relative;
         }
-        .price-tag-preview-wrapper[data-template="A4"] { width: 210mm; height: 297mm; }
-        .price-tag-preview-wrapper[data-template="A5"] { width: 148mm; height: 210mm; }
-        .price-tag-preview-wrapper[data-template="A6"] { width: 105mm; height: 148mm; }
-        .price-tag-preview-wrapper[data-template="Acc"] { width: 99mm; height: 70mm; /* Approx 1/3 of A6 landscape */ }
 
-        .tag-border {
-            position: absolute;
-            top: 5mm; left: 5mm; right: 5mm; bottom: 5mm;
-            border: 2.5mm solid black;
-            display: flex;
-            flex-direction: column;
-        }
         .tag-header {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            padding: 5mm;
         }
-        .tag-logo { max-width: 25%; max-height: 15mm; object-fit: contain; }
-        .tag-sku { font-size: 4mm; font-weight: 500; }
+        
+        .tag-logo {
+            width: 30mm;
+            height: auto;
+        }
+        
+        .tag-sku {
+            font-size: 14pt;
+            font-weight: 500;
+            text-align: right;
+        }
+
         .tag-body {
-            flex-grow: 1;
-            padding: 0 10mm;
+            padding: 8mm 0;
             display: flex;
             flex-direction: column;
-            justify-content: center;
         }
-        .tag-brand { font-size: 6mm; font-weight: 300; margin: 0; }
-        .tag-name { font-size: 14mm; font-weight: 700; margin: 0; line-height: 1.2; }
-        .tag-details {
-            margin-top: 8mm;
-            padding-left: 5mm;
-            font-size: 4.5mm;
-            list-style-type: '• ';
-        }
-        .tag-footer {
-            min-height: 30mm;
-            background: var(--primary-color);
-            color: white;
-            margin: 5mm;
-            padding: 4mm 8mm;
-            position: relative;
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-        }
-        .tag-expire {
-            position: absolute;
-            left: 8mm;
-            top: 4mm;
-            font-size: 4mm;
-            font-weight: 300;
-        }
-        .tag-normal-price {
-            text-decoration: line-through;
-            font-size: 8mm;
-            font-weight: 500;
-            margin-right: 10mm;
-            opacity: 0.8;
-        }
-        .tag-promo-price {
-            font-size: 18mm;
+        
+        .tag-description {
+            font-size: 28pt;
             font-weight: 700;
+            line-height: 1.2;
+        }
+        
+        .tag-details {
+            margin-top: 5mm;
+            font-size: 14pt;
+            line-height: 1.5;
+        }
+        
+        .tag-details ul {
+            list-style-position: inside;
+            padding-left: 0;
+        }
+
+        .tag-footer {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            align-items: flex-end;
+            margin-top: auto;
+        }
+        
+        .price-info {
+            text-align: right;
+        }
+
+        .tag-expire {
+            font-size: 12pt;
+            font-weight: 500;
+            align-self: flex-end;
+            white-space: nowrap;
+        }
+
+        .tag-normal-price {
+            font-size: 24pt;
+            text-decoration: line-through;
+            color: #666;
+            margin-right: 2mm;
+        }
+
+        .tag-promo-price {
+            font-size: 56pt;
+            font-weight: 700;
+            color: var(--primary-red);
             line-height: 1;
         }
-        /* Acc Tag Specifics */
-        .price-tag-preview-wrapper[data-template="Acc"] .tag-border {
-            top: 2mm; left: 2mm; right: 2mm; bottom: 2mm; border-width: 1mm;
-        }
-        .price-tag-preview-wrapper[data-template="Acc"] .tag-header { padding: 2mm; }
-        .price-tag-preview-wrapper[data-template="Acc"] .tag-logo { max-height: 8mm; }
-        .price-tag-preview-wrapper[data-template="Acc"] .tag-sku { font-size: 2.5mm; }
-        .price-tag-preview-wrapper[data-template="Acc"] .tag-body { padding: 0 4mm; justify-content: flex-start; }
-        .price-tag-preview-wrapper[data-template="Acc"] .tag-brand { font-size: 3mm; margin-top: 2mm;}
-        .price-tag-preview-wrapper[data-template="Acc"] .tag-name { font-size: 4.5mm; }
-        .price-tag-preview-wrapper[data-template="Acc"] .tag-details { display: none; } /* No details on Acc tag */
-        .price-tag-preview-wrapper[data-template="Acc"] .tag-footer {
-            margin: 2mm; padding: 2mm 4mm; min-height: 15mm;
-        }
-        .price-tag-preview-wrapper[data-template="Acc"] .tag-expire {
-            font-size: 2mm; top: 2mm; left: 4mm;
-        }
-        .price-tag-preview-wrapper[data-template="Acc"] .tag-normal-price { font-size: 4mm; margin-right: 4mm; }
-        .price-tag-preview-wrapper[data-template="Acc"] .tag-promo-price { font-size: 7mm; }
+        
+        /* A4 Size */
+        .tag-a4 { width: 180mm; height: 267mm; }
+        
+        /* A5 Size */
+        .tag-a5 { width: 118mm; height: 180mm; }
+        .tag-a5 .tag-description { font-size: 22pt; }
+        .tag-a5 .tag-details { font-size: 12pt; }
+        .tag-a5 .tag-normal-price { font-size: 20pt; }
+        .tag-a5 .tag-promo-price { font-size: 48pt; }
 
-        /* --- Print Styles --- */
+        /* A6 Size */
+        .tag-a6 { width: 75mm; height: 118mm; }
+        .tag-a6 .tag-logo { width: 20mm; }
+        .tag-a6 .tag-sku { font-size: 9pt; }
+        .tag-a6 .tag-description { font-size: 16pt; }
+        .tag-a6 .tag-details { font-size: 9pt; margin-top: 3mm; }
+        .tag-a6 .tag-expire { font-size: 8pt; }
+        .tag-a6 .tag-normal-price { font-size: 14pt; }
+        .tag-a6 .tag-promo-price { font-size: 32pt; }
+        
+        /* Accessories Tag Size */
+        .tag-acc { width: 75mm; height: 35mm; border-width: 1mm; padding: 4mm; }
+        .tag-acc .tag-header { display: block; }
+        .tag-acc .tag-logo { display: none; }
+        .tag-acc .tag-sku { font-size: 8pt; position: absolute; top: 2mm; right: 2mm; }
+        .tag-acc .tag-body { padding: 0; }
+        .tag-acc .tag-description { font-size: 11pt; line-height: 1.1; font-weight: 700; }
+        .tag-acc .tag-details { display: none; }
+        .tag-acc .tag-footer { grid-template-columns: 1fr; }
+        .tag-acc .tag-expire { display: none; }
+        .tag-acc .price-info { display: flex; align-items: baseline; justify-content: flex-end; }
+        .tag-acc .tag-normal-price { font-size: 11pt; }
+        .tag-acc .tag-promo-price { font-size: 18pt; }
+
+        /* --- PRINT STYLES --- */
         @media print {
-            body, .container, .modal-overlay {
-                margin: 0;
-                padding: 0;
-                background: white;
+            body, html {
+                background-color: white;
             }
-            #login-screen, #app-container { display: none; }
-            #print-area { display: block; }
-            @page {
-                size: A4;
-                margin: 0;
+            #app-container, #login-container, .modal {
+                display: none !important;
+            }
+            #print-area {
+                display: block !important;
             }
             .print-page {
-                width: 210mm;
-                height: 297mm;
-                page-break-after: always;
                 display: flex;
                 flex-wrap: wrap;
                 align-content: flex-start;
+                justify-content: flex-start;
+                width: 210mm;
+                height: 297mm;
+                page-break-after: always;
                 overflow: hidden;
             }
-            .print-tag-wrapper {
-                color: black;
-                font-family: 'Kanit', sans-serif;
-                position: relative; /* Changed from absolute for flow */
-                overflow: hidden;
-                box-sizing: border-box; /* Important for layout */
+            .price-tag {
+                margin: 0;
+                box-shadow: none;
             }
-            /* Layouts */
-            .print-layout-A4 .print-tag-wrapper { width: 210mm; height: 297mm; }
-            .print-layout-A5 .print-tag-wrapper { width: 148.5mm; height: 210mm; } /* A5 is half of A4 landscape */
-            .print-layout-A6 .print-tag-wrapper { width: 105mm; height: 148.5mm; }
-            .print-layout-Acc .print-tag-wrapper { width: 105mm; height: 74.25mm; } /* 4 rows of 2x Acc tags landscape */
-            /* A5 Special: 2 side-by-side */
-            .print-layout-A5 {
-                display: grid !important;
-                grid-template-columns: 148.5mm 148.5mm;
-                width: 297mm; /* Landscape */
-                height: 210mm;
-                transform: rotate(-90deg) translateX(-210mm);
-                transform-origin: top left;
-
-            }
-             .print-layout-A5 .print-tag-wrapper {
-                width: 148.5mm; height: 210mm;
-             }
-
+            .tag-a4 { margin: 15mm; }
+            .tag-a5 { margin: 15mm 15mm 0 15mm; }
+            .tag-a6 { margin: 14.25mm 15mm 0 15mm; }
+            .tag-acc { margin: 3.5mm 7.5mm; }
         }
-        #print-area { display: none; }
+        
+        #print-area {
+            display: none;
+        }
 
     </style>
 </head>
 <body>
 
-    <div id="login-screen">
+    <div id="login-container">
         <div id="login-form">
-            <h1>Price Tag System</h1>
-            <p id="login-error"></p>
-            <div class="form-group">
+            <h2 style="text-align: center;">ProPlugin Price Tag</h2>
+            <div class="control-group">
                 <label for="username">ชื่อผู้ใช้</label>
-                <input type="text" id="username" value="host1">
+                <input type="text" id="username" placeholder="Username">
             </div>
-            <div class="form-group">
+            <div class="control-group">
                 <label for="password">รหัสผ่าน</label>
-                <input type="password" id="password" value="host123">
+                <input type="password" id="password" placeholder="Password">
             </div>
+            <p id="login-error">ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง</p>
             <button id="login-button">เข้าสู่ระบบ</button>
         </div>
     </div>
 
-    <div id="app-container" class="container hidden">
-        <header id="app-header">
-            <h1>ProPlugin Price Tag</h1>
-            <div id="user-info">
-                <span id="welcome-message"></span>
-                <button class="admin-link hidden" id="admin-panel-button">แผงควบคุม</button>
-                <button id="logout-button">ออกจากระบบ</button>
+    <div id="app-container">
+        <header>
+            <div>
+                <h3>Price Tag Management</h3>
+                <span id="user-info"></span>
+            </div>
+            <div>
+                 <button id="admin-button" class="secondary" style="margin-right: 1rem;">⚙️ แผงควบคุม</button>
+                 <button id="logout-button">ออกจากระบบ</button>
             </div>
         </header>
 
-        <main id="main-view">
+        <main>
             <div class="controls-grid">
                 <div class="control-group">
-                    <label for="search-input">ค้นหา (SKU, ชื่อสินค้า)</label>
+                    <label for="search-input">🔍 ค้นหา (SKU, ชื่อสินค้า)</label>
                     <input type="text" id="search-input" placeholder="พิมพ์เพื่อค้นหา...">
                 </div>
                 <div class="control-group">
-                    <label for="expire-filter">กรองตามวันหมดอายุโปรโมชั่น</label>
+                    <label for="expire-filter">🗓️ กรองตามวันหมดอายุโปรโมชั่น</label>
                     <input type="date" id="expire-filter">
                 </div>
                 <div class="control-group">
-                    <label for="channel-selector">ช่องทางการขาย</label>
-                    <select id="channel-selector">
-                        <option value="Flagship">Flagship / Website</option>
-                        <option value="Dealer">Dealer</option>
-                        <option value="Marketplace">Marketplace</option>
+                    <label for="channel-selector">📡 ช่องทางการขาย</label>
+                    <select id="channel-selector"></select>
+                </div>
+                <div class="control-group">
+                    <label for="template-selector">📄 เลือกแม่แบบสำหรับพิมพ์</label>
+                    <select id="template-selector">
+                        <option value="A4">ป้าย A4 (1 ต่อหน้า)</option>
+                        <option value="A5">ป้าย A5 (2 ต่อหน้า)</option>
+                        <option value="A6" selected>ป้าย A6 (4 ต่อหน้า)</option>
+                        <option value="Acc">ป้าย Accessories (12 ต่อหน้า)</option>
                     </select>
                 </div>
-                <div class="control-group main-actions">
-                     <label>&nbsp;</label>
-                    <button id="preview-selected-button" disabled>ดูตัวอย่างป้ายราคา</button>
-                </div>
+            </div>
+            
+            <div>
+                <button id="preview-button" disabled>👁️ แสดงตัวอย่าง</button>
+                <button id="print-button" disabled>🖨️ พิมพ์ป้ายราคา</button>
             </div>
 
             <div class="table-container">
-                <table id="sku-table">
+                <table id="data-table">
                     <thead></thead>
                     <tbody></tbody>
                 </table>
             </div>
 
-            <div id="pagination"></div>
+            <div class="pagination">
+                <button id="prev-page">ย้อนกลับ</button>
+                <span id="page-info"></span>
+                <button id="next-page">ถัดไป</button>
+            </div>
         </main>
-
-        <aside id="admin-panel" class="hidden">
-            <button id="back-to-main-view">← กลับไปหน้าหลัก</button>
-            <h1>แผงควบคุม</h1>
-
-            <div class="admin-section" id="user-management-section">
-                <h2>จัดการผู้ใช้งาน</h2>
-                <p>การจัดการผู้ใช้งานจะถูกกำหนดค่าโดยตรงในโค้ด (สำหรับ Host)</p>
-            </div>
-
-            <div class="admin-section">
-                <h2>จัดการข้อมูลสินค้า (SKU)</h2>
-                 <p>นำเข้าข้อมูลล่าสุดจากไฟล์ Excel (.xlsx) ของคุณ</p>
-                <input type="file" id="excel-file-input" accept=".xlsx, .xls">
-                <button id="export-csv-button">ส่งออกข้อมูลเป็น CSV</button>
-            </div>
-
-            <div class="admin-section">
-                <h2>ตั้งค่าทั่วไป</h2>
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label for="logo-upload">อัพโหลดโลโก้บริษัท</label>
-                        <input type="file" id="logo-upload" accept="image/*">
-                        <img id="logo-preview" src="" alt="Logo Preview">
-                    </div>
-                </div>
-            </div>
-
-            <div class="admin-section">
-                <h2>ตั้งค่า Dealer</h2>
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label for="dealer-tier1-name">ชื่อ Tier 1</label>
-                        <input type="text" id="dealer-tier1-name">
-                    </div>
-                    <div class="form-group">
-                        <label for="dealer-tier2-name">ชื่อ Tier 2</label>
-                        <input type="text" id="dealer-tier2-name">
-                    </div>
-                    <div class="form-group">
-                        <label for="dealer-tier3-name">ชื่อ Tier 3</label>
-                        <input type="text" id="dealer-tier3-name">
-                    </div>
-                     <div class="form-group">
-                        <label for="default-dealer-tier">Tier เริ่มต้นสำหรับพิมพ์</label>
-                        <select id="default-dealer-tier">
-                            <option value="T1">Tier 1</option>
-                            <option value="T2">Tier 2</option>
-                            <option value="T3">Tier 3</option>
-                        </select>
-                    </div>
-                </div>
-                 <button id="save-settings-button">บันทึกการตั้งค่า</button>
-            </div>
-
-            <div class="admin-section">
-                <h2>ประวัติการใช้งาน (Logs)</h2>
-                <button id="export-logs-button">ส่งออก Logs เป็น CSV</button>
-                <div class="table-container">
-                    <table id="logs-table">
-                        <thead>
-                            <tr><th>Timestamp</th><th>User</th><th>Action</th><th>Details</th></tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
-            </div>
-
-        </aside>
-
     </div>
 
-    <div id="preview-modal" class="modal-overlay hidden">
+    <div id="preview-modal" class="modal">
         <div class="modal-content">
-            <div class="modal-header">
+            <span class="close-button" id="close-preview">&times;</span>
+            <h2>แสดงตัวอย่างป้ายราคา</h2>
+            <div class="preview-controls">
                 <div class="preview-nav">
-                     <button id="prev-sku-button">‹ ก่อนหน้า</button>
-                     <span id="sku-counter"></span>
-                     <button id="next-sku-button">ถัดไป ›</button>
+                    <button id="prev-item">◀ ก่อนหน้า</button>
+                    <span id="item-counter"></span>
+                    <button id="next-item">ถัดไป ▶</button>
                 </div>
-                <h2>ตัวอย่างป้ายราคา</h2>
-                <button class="modal-close" id="close-modal-button">×</button>
+                <div class="control-group" id="dealer-tier-selector-group" style="display: none;">
+                    <label for="dealer-tier-selector">ระดับราคาดีลเลอร์</label>
+                    <select id="dealer-tier-selector"></select>
+                </div>
+                 <div class="control-group">
+                    <label for="modal-template-selector">เปลี่ยนแม่แบบ</label>
+                    <select id="modal-template-selector"></select>
+                </div>
             </div>
-            <div class="modal-body">
-                <div class="modal-controls">
-                    <div class="control-group">
-                        <label for="preview-template-selector">เลือกแม่แบบ</label>
-                        <select id="preview-template-selector">
-                            <option value="A4">A4 (1 per page)</option>
-                            <option value="A5">A5 (2 per page)</option>
-                            <option value="A6" selected>A6 (4 per page)</option>
-                            <option value="Acc">Accessories Tag (12 per page)</option>
-                        </select>
-                    </div>
-                    <div class="control-group hidden" id="preview-dealer-tier-group">
-                        <label for="preview-dealer-tier-selector">เลือก Dealer Tier</label>
-                        <select id="preview-dealer-tier-selector">
-                            </select>
-                    </div>
-                    <br>
-                    <button id="print-button">พิมพ์ / ส่งออกเป็น PDF</button>
+            <div id="preview-area">
                 </div>
-                <div class="modal-preview-area">
+             <div style="text-align: right;">
+                <button id="print-modal-button">🖨️ พิมพ์ป้ายนี้</button>
+             </div>
+        </div>
+    </div>
+    
+    <div id="admin-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="close-admin">&times;</span>
+            <h2>แผงควบคุม (Admin)</h2>
+            <div id="admin-panel">
+                <div class="admin-grid">
+                    <div class="admin-section">
+                        <h3>📦 จัดการข้อมูลสินค้า</h3>
+                        <p style="margin-bottom: 1rem;">นำเข้าข้อมูลจากไฟล์ Excel (.xlsx) หรือ Google Sheets ที่ export เป็น .xlsx</p>
+                        <div class="control-group">
+                             <label for="import-excel">เลือกไฟล์ Excel</label>
+                             <input type="file" id="import-excel" accept=".xlsx, .xls">
+                        </div>
+                        <button id="export-excel">💾 Export ข้อมูลปัจจุบันเป็น Excel</button>
                     </div>
+
+                    <div class="admin-section">
+                        <h3>🖼️ จัดการโลโก้</h3>
+                         <div class="control-group">
+                             <label for="logo-upload">อัปโหลดโลโก้บริษัท (แนะนำ .png พื้นหลังโปร่งใส)</label>
+                             <input type="file" id="logo-upload" accept="image/*">
+                         </div>
+                         <div style="margin-top:1rem;">
+                            <p>ตัวอย่างโลโก้ปัจจุบัน:</p>
+                            <img id="logo-preview" src="" alt="Logo Preview" style="max-width: 150px; background: #fff; padding: 5px; border-radius: 4px; min-height: 50px;">
+                         </div>
+                    </div>
+
+                    <div class="admin-section">
+                        <h3>딜️ ตั้งค่าดีลเลอร์</h3>
+                         <div class="form-grid">
+                            <div class="control-group">
+                                <label for="dealer-t1-label">ชื่อ Tier 1</label>
+                                <input type="text" id="dealer-t1-label">
+                            </div>
+                            <div class="control-group">
+                                <label for="dealer-t2-label">ชื่อ Tier 2</label>
+                                <input type="text" id="dealer-t2-label">
+                            </div>
+                             <div class="control-group">
+                                <label for="dealer-t3-label">ชื่อ Tier 3</label>
+                                <input type="text" id="dealer-t3-label">
+                            </div>
+                             <div class="control-group">
+                                <label for="default-tier-selector">Tier เริ่มต้นสำหรับพิมพ์</label>
+                                <select id="default-tier-selector"></select>
+                            </div>
+                         </div>
+                        <button id="save-dealer-settings" style="margin-top: 1rem;">บันทึกการตั้งค่าดีลเลอร์</button>
+                    </div>
+                    
+                    <div class="admin-section" id="user-management-section" style="display:none;">
+                         <h3>👥 จัดการผู้ใช้งาน (Host Only)</h3>
+                         <p>ฟังก์ชันการจัดการผู้ใช้อย่างเต็มรูปแบบต้องใช้ Backend ในเวอร์ชันนี้ บทบาทและสิทธิ์ถูกกำหนดไว้ล่วงหน้า</p>
+                         <ul id="user-list" style="list-style: none; margin-top: 1rem; display: flex; flex-direction: column; gap: 0.5rem;"></ul>
+                    </div>
+                </div>
+
+                <div class="admin-section" style="margin-top: 2rem;">
+                    <h3>📜 ประวัติการทำงาน (Logs)</h3>
+                    <div id="log-container" style="height: 200px; overflow-y: scroll; background: var(--bg-color); padding: 1rem; border-radius: 4px; margin-bottom: 1rem;"></div>
+                    <button id="export-logs">📄 Export Logs เป็น CSV</button>
+                </div>
             </div>
         </div>
     </div>
-
+    
     <div id="print-area"></div>
 
+
 <script>
-// Logic will be placed here
+/**
+ * ==================================================================================
+ * ProPlugin Price Tag Management Application
+ * ==================================================================================
+ * A client-side, single-file web application for internal price tag management.
+ *
+ * --- HOW TO USE ---
+ * 1.  Save this entire file as "index.html".
+ * 2.  Open the file in a modern web browser (Chrome, Firefox, Edge).
+ * 3.  Log in using one of the provided credentials.
+ * 4.  (Admin/Host) Go to the Admin Panel (⚙️) to upload your company logo and
+ * an Excel file with product data.
+ * 5.  The app is now ready for use by all roles.
+ *
+ * --- DEMO CREDENTIALS ---
+ * - Role: Host      | User: host1   | Pass: host123
+ * - Role: Admin     | User: admin1  | Pass: admin123
+ * - Role: User1     | User: user1   | Pass: u1pass   (Flagship Access)
+ * - Role: User2     | User: user2   | Pass: u2pass   (Flagship Access)
+ * - Role: User3     | User: user3   | Pass: u3pass   (Dealer Access + GP%)
+ * - Role: User4     | User: user4   | Pass: u4pass   (Marketplace Access + GP%)
+ *
+ * --- DEPLOYMENT ---
+ * This application is 100% client-side and can be deployed to any static
+ * web hosting service.
+ * - GitHub Pages: Push this `index.html` file to a GitHub repository and enable
+ * GitHub Pages in the repository settings.
+ * - Vercel/Netlify: Connect your GitHub repository to a new Vercel/Netlify project.
+ * No build configuration is needed.
+ *
+ * --- EXCEL DATA MAPPING ---
+ * The application will attempt to map columns from your uploaded Excel file.
+ * For best results, use headers that match these keys (case-insensitive).
+ * The app will look for English or common Thai variations.
+ *
+ * - Item No. (SKU):       'Item No.', 'sku'
+ * - Description:          'Description', 'ชื่อสินค้า'
+ * - Details:              'Details', 'รายละเอียด' (use '\n' for bullets)
+ * - Normal Price:         'Normal Price', 'ราคาปกติ'
+ * - Promotion Price:      'Promotion Price', 'ราคาโปรโมชั่น'
+ * - Expire Date:          'Expire Date', 'วันหมดอายุ'
+ *
+ * - Flagship Price:       'Flagship Price / Website' (or 'flagship_price')
+ * - Marketplace Price:    'Marketplace Price' (or 'marketplace_price')
+ * - Marketplace GP%:      'GP%' (Marketplace) (or 'market_gp')
+ *
+ * - Dealer Tier 1 Price:  'Dealer Price_1-20 Units' (or 'dealer_price_t1')
+ * - Dealer Tier 1 GP%:    'GP %_1-20 Units' (or 'dealer_gp_t1')
+ * - Dealer Tier 2 Price:  'Dealer Price_21-30 Units' (or 'dealer_price_t2')
+ * - Dealer Tier 2 GP%:    'GP %_21-30 Units' (or 'dealer_gp_t2')
+ * - Dealer Tier 3 Price:  'Dealer Price_31 Units Up' (or 'dealer_price_t3')
+ * - Dealer Tier 3 GP%:    'GP %_31 Units Up' (or 'dealer_gp_t3')
+ *
+ * ==================================================================================
+ */
+
+document.addEventListener('DOMContentLoaded', () => {
+
+    // --- STATE MANAGEMENT ---
+    const AppState = {
+        currentUser: null,
+        productData: [],
+        filteredData: [],
+        currentPage: 1,
+        itemsPerPage: 20,
+        selectedSKUs: new Set(),
+        currentPreviewIndex: 0,
+        previewItems: [],
+        settings: {
+            logo: '',
+            dealerTierLabels: { t1: 'Dealer Tier 1', t2: 'Dealer Tier 2', t3: 'Dealer Tier 3' },
+            defaultDealerTier: 't1'
+        },
+        logs: []
+    };
+
+    // --- USER DATABASE & ROLES ---
+    const USERS = {
+        host1: { pass: 'host123', role: 'Host', channels: ['Flagship', 'Dealer', 'Marketplace'] },
+        admin1: { pass: 'admin123', role: 'Admin', channels: ['Flagship', 'Dealer', 'Marketplace'] },
+        user1: { pass: 'u1pass', role: 'User', channels: ['Flagship'] },
+        user2: { pass: 'u2pass', role: 'User', channels: ['Flagship'] },
+        user3: { pass: 'u3pass', role: 'User', channels: ['Dealer'] },
+        user4: { pass: 'u4pass', role: 'User', channels: ['Marketplace'] },
+    };
+
+    // --- DOM ELEMENT SELECTORS ---
+    const DOM = {
+        loginContainer: document.getElementById('login-container'),
+        appContainer: document.getElementById('app-container'),
+        loginForm: document.getElementById('login-form'),
+        loginButton: document.getElementById('login-button'),
+        loginError: document.getElementById('login-error'),
+        usernameInput: document.getElementById('username'),
+        passwordInput: document.getElementById('password'),
+        userInfo: document.getElementById('user-info'),
+        logoutButton: document.getElementById('logout-button'),
+        adminButton: document.getElementById('admin-button'),
+        searchInput: document.getElementById('search-input'),
+        expireFilter: document.getElementById('expire-filter'),
+        channelSelector: document.getElementById('channel-selector'),
+        templateSelector: document.getElementById('template-selector'),
+        dataTableBody: document.querySelector('#data-table tbody'),
+        dataTableHead: document.querySelector('#data-table thead'),
+        pagination: {
+            prev: document.getElementById('prev-page'),
+            next: document.getElementById('next-page'),
+            info: document.getElementById('page-info'),
+        },
+        previewButton: document.getElementById('preview-button'),
+        printButton: document.getElementById('print-button'),
+        // Modals
+        previewModal: document.getElementById('preview-modal'),
+        closePreview: document.getElementById('close-preview'),
+        adminModal: document.getElementById('admin-modal'),
+        closeAdmin: document.getElementById('close-admin'),
+        // Preview Modal Content
+        previewArea: document.getElementById('preview-area'),
+        itemCounter: document.getElementById('item-counter'),
+        prevItemBtn: document.getElementById('prev-item'),
+        nextItemBtn: document.getElementById('next-item'),
+        modalTemplateSelector: document.getElementById('modal-template-selector'),
+        printModalButton: document.getElementById('print-modal-button'),
+        dealerTierGroup: document.getElementById('dealer-tier-selector-group'),
+        dealerTierSelector: document.getElementById('dealer-tier-selector'),
+        // Admin Panel
+        importExcel: document.getElementById('import-excel'),
+        exportExcel: document.getElementById('export-excel'),
+        logoUpload: document.getElementById('logo-upload'),
+        logoPreview: document.getElementById('logo-preview'),
+        dealerT1Label: document.getElementById('dealer-t1-label'),
+        dealerT2Label: document.getElementById('dealer-t2-label'),
+        dealerT3Label: document.getElementById('dealer-t3-label'),
+        defaultTierSelector: document.getElementById('default-tier-selector'),
+        saveDealerSettingsBtn: document.getElementById('save-dealer-settings'),
+        userManagementSection: document.getElementById('user-management-section'),
+        userList: document.getElementById('user-list'),
+        logContainer: document.getElementById('log-container'),
+        exportLogs: document.getElementById('export-logs'),
+        // Print
+        printArea: document.getElementById('print-area'),
+    };
+    
+    // --- UTILITY FUNCTIONS ---
+    const formatPrice = (price) => {
+        if (price === null || price === undefined || isNaN(price)) return '-';
+        return new Intl.NumberFormat('th-TH').format(price) + '.-';
+    };
+
+    const formatDate = (dateStr) => {
+        if (!dateStr) return '';
+        const [day, month, year] = dateStr.split('-');
+        return `Expire: ${day}-${month}-${year}`;
+    };
+    
+    const parseDateFromExcel = (excelDate) => {
+        if (typeof excelDate === 'number') {
+            const date = new Date(Math.round((excelDate - 25569) * 86400 * 1000));
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
+            return `${day}-${month}-${year}`;
+        }
+        return excelDate; // Assume it's already a string in DD-MM-YYYY format
+    };
+
+    const logAction = (action) => {
+        const timestamp = new Date().toLocaleString('th-TH', { timeZone: 'Asia/Bangkok' });
+        const logEntry = {
+            user: AppState.currentUser.username,
+            role: AppState.currentUser.role,
+            action: action,
+            timestamp: timestamp
+        };
+        AppState.logs.unshift(logEntry);
+        if (AppState.logs.length > 200) AppState.logs.pop(); // Keep logs tidy
+        saveToLocalStorage('logs', AppState.logs);
+        renderLogs();
+    };
+
+    const saveToLocalStorage = (key, data) => {
+        try {
+            localStorage.setItem(`proplugin_app_${key}`, JSON.stringify(data));
+        } catch (e) {
+            console.error("Error saving to localStorage", e);
+            alert("ไม่สามารถบันทึกข้อมูลได้ localStorage อาจเต็ม");
+        }
+    };
+    
+    const loadFromLocalStorage = (key, defaultValue = null) => {
+        try {
+            const data = localStorage.getItem(`proplugin_app_${key}`);
+            return data ? JSON.parse(data) : defaultValue;
+        } catch (e) {
+            console.error("Error loading from localStorage", e);
+            return defaultValue;
+        }
+    };
+
+    // --- AUTHENTICATION MODULE ---
+    const Auth = {
+        init() {
+            const sessionUser = loadFromLocalStorage('currentUser');
+            if(sessionUser) {
+                AppState.currentUser = sessionUser;
+                this.showDashboard();
+            } else {
+                this.showLogin();
+            }
+        },
+        login(username, password) {
+            const user = USERS[username];
+            if (user && user.pass === password) {
+                AppState.currentUser = { username, role: user.role, channels: user.channels };
+                saveToLocalStorage('currentUser', AppState.currentUser);
+                logAction('เข้าสู่ระบบ (Logged in)');
+                this.showDashboard();
+                return true;
+            }
+            return false;
+        },
+        logout() {
+            logAction('ออกจากระบบ (Logged out)');
+            AppState.currentUser = null;
+            localStorage.removeItem('proplugin_app_currentUser');
+            this.showLogin();
+        },
+        showLogin() {
+            DOM.loginContainer.style.display = 'flex';
+            DOM.appContainer.style.display = 'none';
+        },
+        showDashboard() {
+            DOM.loginContainer.style.display = 'none';
+            DOM.appContainer.style.display = 'flex';
+            UI.setupForUser();
+        },
+        hasPermission(permission) {
+            if(!AppState.currentUser) return false;
+            const role = AppState.currentUser.role;
+            if (role === 'Host') return true; // Host can do everything
+            if (role === 'Admin') return permission !== 'manage_users';
+            return false;
+        }
+    };
+
+    // --- UI MODULE ---
+    const UI = {
+        setupForUser() {
+            DOM.userInfo.textContent = `ผู้ใช้: ${AppState.currentUser.username} (${AppState.currentUser.role})`;
+            
+            // Populate channel selector based on user permissions
+            DOM.channelSelector.innerHTML = '';
+            AppState.currentUser.channels.forEach(channel => {
+                const option = document.createElement('option');
+                option.value = channel.toLowerCase();
+                option.textContent = channel;
+                DOM.channelSelector.appendChild(option);
+            });
+            DOM.channelSelector.value = AppState.currentUser.channels[0].toLowerCase(); // Default to first available
+            
+            // Show/hide admin button
+            DOM.adminButton.style.display = Auth.hasPermission('view_admin') ? 'inline-block' : 'none';
+            
+            Data.filterAndRender();
+        },
+        
+        renderTable() {
+            this.renderTableHeader();
+            this.renderTableBody();
+            this.updatePagination();
+            this.updateActionButtons();
+        },
+        
+        renderTableHeader() {
+            const channel = DOM.channelSelector.value;
+            const canViewGP = (AppState.currentUser.role === 'Host' || AppState.currentUser.role === 'Admin' || (AppState.currentUser.role === 'User' && (channel === 'dealer' || channel === 'marketplace')))
+            
+            let headers = [
+                '<input type="checkbox" id="select-all-checkbox">', 
+                'SKU', 'ชื่อสินค้า', 'รายละเอียด', 'ราคาปกติ'
+            ];
+            
+            switch (channel) {
+                case 'flagship':
+                    headers.push('ราคาโปรโมชั่น');
+                    break;
+                case 'dealer':
+                    const labels = AppState.settings.dealerTierLabels;
+                    headers.push(labels.t1, `GP% T1`, labels.t2, `GP% T2`, labels.t3, `GP% T3`);
+                    break;
+                case 'marketplace':
+                    headers.push('ราคา Marketplace');
+                    if(canViewGP) headers.push('GP% Marketplace');
+                    break;
+            }
+            
+            headers.push('วันหมดอายุโปรฯ');
+            
+            DOM.dataTableHead.innerHTML = `<tr><th>${headers.join('</th><th>')}</th></tr>`;
+            document.getElementById('select-all-checkbox').addEventListener('change', (e) => {
+                const isChecked = e.target.checked;
+                const checkboxes = DOM.dataTableBody.querySelectorAll('input[type="checkbox"]');
+                AppState.selectedSKUs.clear();
+                checkboxes.forEach(cb => {
+                    cb.checked = isChecked;
+                    if(isChecked) AppState.selectedSKUs.add(cb.dataset.sku);
+                });
+                this.updateActionButtons();
+            });
+        },
+        
+        renderTableBody() {
+            DOM.dataTableBody.innerHTML = '';
+            const pageData = AppState.filteredData.slice(
+                (AppState.currentPage - 1) * AppState.itemsPerPage,
+                AppState.currentPage * AppState.itemsPerPage
+            );
+
+            if(pageData.length === 0) {
+                const colSpan = DOM.dataTableHead.querySelector('tr').children.length;
+                DOM.dataTableBody.innerHTML = `<tr><td colspan="${colSpan}" style="text-align:center; padding: 2rem;">ไม่พบข้อมูล</td></tr>`;
+                return;
+            }
+
+            const channel = DOM.channelSelector.value;
+            const canViewGP = (AppState.currentUser.role === 'Host' || AppState.currentUser.role === 'Admin' || (AppState.currentUser.role === 'User' && (channel === 'dealer' || channel === 'marketplace')))
+
+            pageData.forEach(item => {
+                const tr = document.createElement('tr');
+                const isSelected = AppState.selectedSKUs.has(item.sku);
+
+                let rowHTML = `
+                    <td><input type="checkbox" data-sku="${item.sku}" ${isSelected ? 'checked' : ''}></td>
+                    <td>${item.sku || '-'}</td>
+                    <td>${item.description || '-'}</td>
+                    <td class="details-col">${(item.details || '').replace(/\n/g, '<br>')}</td>
+                    <td>${formatPrice(item.normal_price)}</td>
+                `;
+
+                switch (channel) {
+                    case 'flagship':
+                        rowHTML += `<td>${formatPrice(item.promo_price)}</td>`;
+                        break;
+                    case 'dealer':
+                        rowHTML += `
+                            <td>${formatPrice(item.dealer_prices.t1)}</td>
+                            <td class="gp-col">${canViewGP ? item.dealer_gps.t1 + '%' : '-'}</td>
+                            <td>${formatPrice(item.dealer_prices.t2)}</td>
+                            <td class="gp-col">${canViewGP ? item.dealer_gps.t2 + '%' : '-'}</td>
+                            <td>${formatPrice(item.dealer_prices.t3)}</td>
+                            <td class="gp-col">${canViewGP ? item.dealer_gps.t3 + '%' : '-'}</td>
+                        `;
+                        break;
+                    case 'marketplace':
+                        rowHTML += `<td>${formatPrice(item.marketplace_price)}</td>`;
+                        if (canViewGP) rowHTML += `<td class="gp-col">${item.market_gp ? item.market_gp + '%' : '-'}</td>`;
+                        break;
+                }
+                
+                rowHTML += `<td>${item.expire_date || '-'}</td>`;
+                tr.innerHTML = rowHTML;
+                
+                tr.querySelector('input[type="checkbox"]').addEventListener('change', (e) => {
+                    if (e.target.checked) {
+                        AppState.selectedSKUs.add(item.sku);
+                    } else {
+                        AppState.selectedSKUs.delete(item.sku);
+                    }
+                    this.updateActionButtons();
+                });
+                
+                DOM.dataTableBody.appendChild(tr);
+            });
+        },
+        
+        updatePagination() {
+            const totalPages = Math.ceil(AppState.filteredData.length / AppState.itemsPerPage);
+            DOM.pagination.info.textContent = `หน้า ${AppState.currentPage} / ${totalPages || 1}`;
+            DOM.pagination.prev.disabled = AppState.currentPage === 1;
+            DOM.pagination.next.disabled = AppState.currentPage === totalPages || totalPages === 0;
+        },
+        
+        updateActionButtons() {
+            const hasSelection = AppState.selectedSKUs.size > 0;
+            DOM.previewButton.disabled = !hasSelection;
+            DOM.printButton.disabled = !hasSelection;
+        },
+        
+        renderTag(item, templateClass, dealerTier = 't1') {
+            if (!item) return '';
+
+            const logoSrc = AppState.settings.logo || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'; // transparent pixel
+            
+            let normalPrice = item.normal_price;
+            let promoPrice;
+            
+            const selectedChannel = DOM.channelSelector.value;
+
+            if (selectedChannel === 'dealer') {
+                promoPrice = item.dealer_prices[dealerTier];
+            } else if (selectedChannel === 'marketplace') {
+                promoPrice = item.marketplace_price;
+            } else { // Flagship and fallback
+                promoPrice = item.promo_price || item.normal_price;
+                if (!item.promo_price) {
+                    normalPrice = null; // Don't show strikethrough if no promo
+                }
+            }
+            
+            const detailsList = (item.details || '')
+                .split('\n')
+                .filter(line => line.trim() !== '')
+                .slice(0, 5)
+                .map(line => `<li>${line.replace(/•\s*/, '')}</li>`)
+                .join('');
+                
+            return `
+                <div class="price-tag ${templateClass}">
+                    <div class="tag-header">
+                        <img src="${logoSrc}" class="tag-logo" alt="Company Logo">
+                        <div class="tag-sku">${item.sku || ''}</div>
+                    </div>
+                    <div class="tag-body">
+                        <div class="tag-description">${item.description || ''}</div>
+                        <div class="tag-details"><ul>${detailsList}</ul></div>
+                    </div>
+                    <div class="tag-footer">
+                        <div class="tag-expire">${item.expire_date ? formatDate(item.expire_date) : ''}</div>
+                        <div class="price-info">
+                            ${normalPrice && promoPrice !== normalPrice ? `<span class="tag-normal-price">${formatPrice(normalPrice)}</span>` : ''}
+                            <span class="tag-promo-price">${formatPrice(promoPrice)}</span>
+                        </div>
+                    </div>
+                </div>`;
+        },
+        
+        openModal(modal) { modal.style.display = 'flex'; },
+        closeModal(modal) { modal.style.display = 'none'; },
+
+        setupPreviewModal() {
+            AppState.previewItems = AppState.productData.filter(p => AppState.selectedSKUs.has(p.sku));
+            if(AppState.previewItems.length === 0) return;
+            
+            AppState.currentPreviewIndex = 0;
+            DOM.modalTemplateSelector.innerHTML = DOM.templateSelector.innerHTML;
+            DOM.modalTemplateSelector.value = DOM.templateSelector.value;
+            
+            const isDealer = DOM.channelSelector.value === 'dealer';
+            DOM.dealerTierGroup.style.display = isDealer ? 'block' : 'none';
+            if(isDealer) {
+                const labels = AppState.settings.dealerTierLabels;
+                DOM.dealerTierSelector.innerHTML = `
+                    <option value="t1">${labels.t1}</option>
+                    <option value="t2">${labels.t2}</option>
+                    <option value="t3">${labels.t3}</option>
+                `;
+                DOM.dealerTierSelector.value = AppState.settings.defaultDealerTier;
+            }
+
+            this.renderPreviewContent();
+            this.openModal(DOM.previewModal);
+        },
+        
+        renderPreviewContent() {
+            const item = AppState.previewItems[AppState.currentPreviewIndex];
+            const template = 'tag-' + DOM.modalTemplateSelector.value.toLowerCase();
+            const dealerTier = DOM.dealerTierSelector.value;
+            
+            DOM.previewArea.innerHTML = this.renderTag(item, template, dealerTier);
+            DOM.itemCounter.textContent = `${AppState.currentPreviewIndex + 1} / ${AppState.previewItems.length}`;
+            DOM.prevItemBtn.disabled = AppState.currentPreviewIndex === 0;
+            DOM.nextItemBtn.disabled = AppState.currentPreviewIndex === AppState.previewItems.length - 1;
+        },
+
+        setupAdminModal() {
+            // Load settings into form
+            DOM.logoPreview.src = AppState.settings.logo || '';
+            const labels = AppState.settings.dealerTierLabels;
+            DOM.dealerT1Label.value = labels.t1;
+            DOM.dealerT2Label.value = labels.t2;
+            DOM.dealerT3Label.value = labels.t3;
+            
+            DOM.defaultTierSelector.innerHTML = `
+                <option value="t1">${labels.t1}</option>
+                <option value="t2">${labels.t2}</option>
+                <option value="t3">${labels.t3}</option>
+            `;
+            DOM.defaultTierSelector.value = AppState.settings.defaultDealerTier;
+            
+            // User management section
+            if (Auth.hasPermission('manage_users')) {
+                DOM.userManagementSection.style.display = 'block';
+                DOM.userList.innerHTML = '';
+                Object.keys(USERS).forEach(username => {
+                    const li = document.createElement('li');
+                    li.textContent = `• ${username} (Role: ${USERS[username].role}, Channels: ${USERS[username].channels.join(', ')})`;
+                    DOM.userList.appendChild(li);
+                });
+            } else {
+                DOM.userManagementSection.style.display = 'none';
+            }
+            
+            renderLogs();
+            this.openModal(DOM.adminModal);
+        },
+    };
+    
+    // --- LOGS MODULE ---
+    function renderLogs() {
+        DOM.logContainer.innerHTML = AppState.logs.map(log => 
+            `<div style="font-size: 0.8rem; border-bottom: 1px solid #444; padding-bottom: 4px; margin-bottom: 4px;">
+                <strong>[${log.timestamp}]</strong> ${log.user} (${log.role}): ${log.action}
+            </div>`
+        ).join('');
+    }
+
+    function exportLogsToCSV() {
+        let csvContent = "data:text/csv;charset=utf-8,";
+        csvContent += "Timestamp,User,Role,Action\n";
+        AppState.logs.forEach(log => {
+            csvContent += `"${log.timestamp}","${log.user}","${log.role}","${log.action}"\n`;
+        });
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", "price_tag_logs.csv");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        logAction('ส่งออกประวัติการทำงาน (Exported logs)');
+    }
+
+
+    // --- DATA MODULE ---
+    const Data = {
+        loadFromExcel(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+                const sheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[sheetName];
+                const json = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+                
+                this.parseAndSetData(json);
+            };
+            reader.readAsArrayBuffer(file);
+        },
+        
+        parseAndSetData(json) {
+            if (json.length < 2) {
+                alert("ไฟล์ Excel ไม่มีข้อมูลหรือไม่ถูกต้อง");
+                return;
+            }
+            
+            const headers = json[0].map(h => String(h).toLowerCase().trim());
+            const dataRows = json.slice(1);
+            
+            const findHeader = (...possibleNames) => {
+                for (const name of possibleNames) {
+                    const index = headers.indexOf(name.toLowerCase());
+                    if (index !== -1) return index;
+                }
+                return -1;
+            };
+
+            const headerMap = {
+                sku: findHeader('item no.', 'sku'),
+                description: findHeader('description', 'ชื่อสินค้า'),
+                details: findHeader('details', 'รายละเอียด'),
+                normal_price: findHeader('normal price', 'ราคาปกติ'),
+                promo_price: findHeader('promotion price', 'ราคาโปรโมชั่น', 'flagship price / website'),
+                expire_date: findHeader('expire date', 'วันหมดอายุ'),
+                marketplace_price: findHeader('marketplace price'),
+                market_gp: findHeader('gp%'),
+                dealer_p1: findHeader('1-20 units', 'dealer price_1-20 units'),
+                dealer_gp1: findHeader('gp %', 'gp %_1-20 units'),
+                dealer_p2: findHeader('21-30 units', 'dealer price_21-30 units'),
+                dealer_gp2: findHeader('gp %.1', 'gp %_21-30 units'),
+                dealer_p3: findHeader('31 units up', 'dealer price_31 units up'),
+                dealer_gp3: findHeader('gp %.2', 'gp %_31 units up'),
+            };
+
+            const parsedData = dataRows.map(row => ({
+                sku: row[headerMap.sku],
+                description: row[headerMap.description],
+                details: row[headerMap.details],
+                normal_price: parseFloat(row[headerMap.normal_price]),
+                promo_price: parseFloat(row[headerMap.promo_price]),
+                expire_date: parseDateFromExcel(row[headerMap.expire_date]),
+                marketplace_price: parseFloat(row[headerMap.marketplace_price]),
+                market_gp: row[headerMap.market_gp] ? (parseFloat(row[headerMap.market_gp]) * 100).toFixed(2) : null,
+                dealer_prices: {
+                    t1: parseFloat(row[headerMap.dealer_p1]),
+                    t2: parseFloat(row[headerMap.dealer_p2]),
+                    t3: parseFloat(row[headerMap.dealer_p3]),
+                },
+                dealer_gps: {
+                    t1: row[headerMap.dealer_gp1] ? (parseFloat(row[headerMap.dealer_gp1]) * 100).toFixed(2) : '0.00',
+                    t2: row[headerMap.dealer_gp2] ? (parseFloat(row[headerMap.dealer_gp2]) * 100).toFixed(2) : '0.00',
+                    t3: row[headerMap.dealer_gp3] ? (parseFloat(row[headerMap.dealer_gp3]) * 100).toFixed(2) : '0.00',
+                }
+            })).filter(item => item.sku); // Filter out empty rows
+            
+            AppState.productData = parsedData;
+            logAction(`นำเข้าข้อมูล ${parsedData.length} รายการจาก Excel`);
+            this.filterAndRender();
+        },
+        
+        exportToExcel() {
+            const worksheet = XLSX.utils.json_to_sheet(AppState.productData.map(item => ({
+                'Item No.': item.sku,
+                'Description': item.description,
+                'Details': item.details,
+                'Normal Price': item.normal_price,
+                'Promotion Price': item.promo_price,
+                'Expire Date': item.expire_date,
+                'Marketplace Price': item.marketplace_price,
+                'Marketplace GP%': item.market_gp ? parseFloat(item.market_gp) / 100 : null,
+                'Dealer Price T1': item.dealer_prices.t1,
+                'Dealer GP% T1': item.dealer_gps.t1 ? parseFloat(item.dealer_gps.t1) / 100 : null,
+                'Dealer Price T2': item.dealer_prices.t2,
+                'Dealer GP% T2': item.dealer_gps.t2 ? parseFloat(item.dealer_gps.t2) / 100 : null,
+                'Dealer Price T3': item.dealer_prices.t3,
+                'Dealer GP% T3': item.dealer_gps.t3 ? parseFloat(item.dealer_gps.t3) / 100 : null,
+            })));
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Products");
+            XLSX.writeFile(workbook, "ProPlugin_Data_Export.xlsx");
+            logAction(`ส่งออกข้อมูล ${AppState.productData.length} รายการเป็น Excel`);
+        },
+        
+        filterAndRender() {
+            const searchTerm = DOM.searchInput.value.toLowerCase();
+            const expireDate = DOM.expireFilter.value;
+
+            AppState.filteredData = AppState.productData.filter(item => {
+                const searchMatch = !searchTerm ||
+                    (item.sku && item.sku.toLowerCase().includes(searchTerm)) ||
+                    (item.description && item.description.toLowerCase().includes(searchTerm));
+
+                // Convert DD-MM-YYYY from data to YYYY-MM-DD for comparison
+                let itemExpireDate = '';
+                if (item.expire_date) {
+                    const parts = item.expire_date.split('-');
+                    if (parts.length === 3) {
+                       itemExpireDate = `${parts[2]}-${parts[1]}-${parts[0]}`;
+                    }
+                }
+                const dateMatch = !expireDate || (itemExpireDate && itemExpireDate === expireDate);
+                
+                return searchMatch && dateMatch;
+            });
+            
+            AppState.currentPage = 1;
+            UI.renderTable();
+        },
+    };
+
+    // --- PRINTING MODULE ---
+    const Print = {
+        printSelection() {
+            const selectedTemplate = DOM.templateSelector.value;
+            const itemsToPrint = AppState.productData.filter(p => AppState.selectedSKUs.has(p.sku));
+            if (itemsToPrint.length === 0) return;
+            
+            this.generatePrintLayout(itemsToPrint, selectedTemplate);
+            logAction(`สั่งพิมพ์ ${itemsToPrint.length} ป้ายด้วยแม่แบบ ${selectedTemplate}`);
+            window.print();
+        },
+        
+        printSingle(item, template) {
+            this.generatePrintLayout([item], template);
+            logAction(`สั่งพิมพ์ 1 ป้าย (SKU: ${item.sku}) ด้วยแม่แบบ ${template}`);
+            window.print();
+        },
+
+        generatePrintLayout(items, templateKey) {
+            DOM.printArea.innerHTML = '';
+            const tagClass = 'tag-' + templateKey.toLowerCase();
+            const dealerTier = AppState.settings.defaultDealerTier;
+            
+            let itemsPerPage;
+            switch(templateKey) {
+                case 'A4': itemsPerPage = 1; break;
+                case 'A5': itemsPerPage = 2; break;
+                case 'A6': itemsPerPage = 4; break;
+                case 'Acc': itemsPerPage = 12; break;
+                default: itemsPerPage = 1;
+            }
+            
+            let page;
+            items.forEach((item, index) => {
+                if (index % itemsPerPage === 0) {
+                    page = document.createElement('div');
+                    page.className = 'print-page';
+                    DOM.printArea.appendChild(page);
+                }
+                const tagHTML = UI.renderTag(item, tagClass, dealerTier);
+                page.innerHTML += tagHTML;
+            });
+        }
+    };
+    
+    // --- EVENT LISTENERS ---
+    function setupEventListeners() {
+        // Login
+        DOM.loginButton.addEventListener('click', () => {
+            const success = Auth.login(DOM.usernameInput.value, DOM.passwordInput.value);
+            if (!success) {
+                DOM.loginError.style.display = 'block';
+            } else {
+                DOM.loginError.style.display = 'none';
+            }
+        });
+        DOM.passwordInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') DOM.loginButton.click();
+        });
+        DOM.logoutButton.addEventListener('click', () => Auth.logout());
+        
+        // Main controls
+        DOM.searchInput.addEventListener('input', () => Data.filterAndRender());
+        DOM.expireFilter.addEventListener('change', () => Data.filterAndRender());
+        DOM.channelSelector.addEventListener('change', () => Data.filterAndRender());
+        
+        // Pagination
+        DOM.pagination.prev.addEventListener('click', () => {
+            if (AppState.currentPage > 1) {
+                AppState.currentPage--;
+                UI.renderTableBody();
+                UI.updatePagination();
+            }
+        });
+        DOM.pagination.next.addEventListener('click', () => {
+            const totalPages = Math.ceil(AppState.filteredData.length / AppState.itemsPerPage);
+            if (AppState.currentPage < totalPages) {
+                AppState.currentPage++;
+                UI.renderTableBody();
+                UI.updatePagination();
+            }
+        });
+
+        // Action buttons
+        DOM.previewButton.addEventListener('click', () => UI.setupPreviewModal());
+        DOM.printButton.addEventListener('click', () => Print.printSelection());
+
+        // Modals
+        DOM.adminButton.addEventListener('click', () => UI.setupAdminModal());
+        DOM.closePreview.addEventListener('click', () => UI.closeModal(DOM.previewModal));
+        DOM.closeAdmin.addEventListener('click', () => UI.closeModal(DOM.adminModal));
+        window.addEventListener('click', (e) => {
+            if (e.target == DOM.previewModal) UI.closeModal(DOM.previewModal);
+            if (e.target == DOM.adminModal) UI.closeModal(DOM.adminModal);
+        });
+        
+        // Preview modal controls
+        DOM.prevItemBtn.addEventListener('click', () => {
+            if (AppState.currentPreviewIndex > 0) {
+                AppState.currentPreviewIndex--;
+                UI.renderPreviewContent();
+            }
+        });
+        DOM.nextItemBtn.addEventListener('click', () => {
+            if (AppState.currentPreviewIndex < AppState.previewItems.length - 1) {
+                AppState.currentPreviewIndex++;
+                UI.renderPreviewContent();
+            }
+        });
+        DOM.modalTemplateSelector.addEventListener('change', () => UI.renderPreviewContent());
+        DOM.dealerTierSelector.addEventListener('change', () => UI.renderPreviewContent());
+        DOM.printModalButton.addEventListener('click', () => {
+            const item = AppState.previewItems[AppState.currentPreviewIndex];
+            const template = DOM.modalTemplateSelector.value;
+            Print.printSingle(item, template);
+        });
+
+        // Admin Panel Controls
+        DOM.importExcel.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) Data.loadFromExcel(file);
+        });
+        DOM.exportExcel.addEventListener('click', () => Data.exportToExcel());
+        DOM.exportLogs.addEventListener('click', exportLogsToCSV);
+        
+        DOM.logoUpload.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    AppState.settings.logo = event.target.result;
+                    DOM.logoPreview.src = AppState.settings.logo;
+                    saveToLocalStorage('settings', AppState.settings);
+                    logAction('อัปเดตโลโก้บริษัท');
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+        
+        DOM.saveDealerSettingsBtn.addEventListener('click', () => {
+            AppState.settings.dealerTierLabels.t1 = DOM.dealerT1Label.value;
+            AppState.settings.dealerTierLabels.t2 = DOM.dealerT2Label.value;
+            AppState.settings.dealerTierLabels.t3 = DOM.dealerT3Label.value;
+            AppState.settings.defaultDealerTier = DOM.defaultTierSelector.value;
+            saveToLocalStorage('settings', AppState.settings);
+            alert("บันทึกการตั้งค่าดีลเลอร์แล้ว");
+            logAction('อัปเดตการตั้งค่าดีลเลอร์');
+            UI.renderTable(); // Re-render table to show new labels
+        });
+    }
+
+    // --- INITIALIZATION ---
+    function init() {
+        const settings = loadFromLocalStorage('settings');
+        if (settings) {
+            AppState.settings = { ...AppState.settings, ...settings };
+        }
+        AppState.logs = loadFromLocalStorage('logs', []);
+
+        // Load sample data for demonstration
+        const sampleData = [
+            {"Item No.":"CT-01166","Description":"iCon Pro Audio GoLive Pro Streaming mixer with remote","Details":"• ออดิโออินเทอร์เฟซสำหรับสตรีมมิ่งพร้อมรีโมทคอนโทรล\n• คุณภาพเสียง 24-bit / 48kHz พร้อม DSP ในตัว (Reverb, EQ, Vocal Tune)\n• แบตเตอรี่ในตัว 5000mAh ใช้งานได้สูงสุด 6 ชั่วโมง\n• รองรับ Mic Input ทั้งแบบ mini-XLR (พร้อม 48V) และ 1/4 นิ้ว\n• เชื่อมต่อ Bluetooth สำหรับเล่นเพลงและควบคุม","Costs":2247.02,"1-20 Units":5790,"GP %":0.61,"21-30 Units":5650,"GP %.1":0.6,"31 Units Up":5500,"GP %.2":0.59,"Marketplace Price":5990,"GP%.3":0.624,"Normal Price":7990,"Promotion Price":5990,"Expire Date":"31-08-2025"},
+            {"Item No.":"RE-00006","Description":"ADAM AUDIO S3V","Details":"• ลำโพงสตูดิโอมอนิเตอร์แบบ 3-Way\n• ดอกลำโพง Subwoofer ขนาด 9 นิ้ว (HexaCone)\n• ดอกลำโพง Mid-range ขนาด 4 นิ้ว (DCH)\n• ทวีตเตอร์แบบ S-ART (HPS Waveguide)\n• ตอบสนองย่านความถี่ 32 Hz - 50 kHz","Costs":85000,"1-20 Units":99000,"GP %":0.14,"21-30 Units":97000,"GP %.1":0.12,"31 Units Up":95000,"GP %.2":0.10,"Marketplace Price":105000,"GP%.3":0.19,"Normal Price":119000,"Promotion Price":105000,"Expire Date":"31-12-2025"},
+        ];
+        Data.parseAndSetData([Object.keys(sampleData[0]), ...sampleData.map(Object.values)]);
+        
+        setupEventListeners();
+        Auth.init();
+    }
+
+    init();
+});
 </script>
+
 </body>
 </html>
